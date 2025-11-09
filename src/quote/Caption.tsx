@@ -3,8 +3,8 @@ import { useEffect, useMemo, useRef, useState, type FC } from 'react';
 import { Link } from 'wouter';
 import { type Quote } from './quote';
 
-const TAG_REGEX = /#(\w+)/g;
-const LINK_REGEX = /\b(?:https?:\/\/|www\.)[^\s]+/g;
+const TAG_RE = /#(\w+)/g;
+const LINK_RE = /\b(?:https?:\/\/|www\.)[^\s]+/g;
 interface Segment {
   type: 'text' | 'mention' | 'tag' | 'link';
   text: string;
@@ -19,7 +19,7 @@ function segmentCaption(caption: Quote['c'], mentions: Quote['m']): Segment[] {
     }
 
   const linkRanges: NonNullable<Quote['m']> = [];
-  for (const match of caption.matchAll(LINK_REGEX)) {
+  for (const match of caption.matchAll(LINK_RE)) {
     const s = match.index,
       e = s + match[0].length;
     linkRanges.push([s, e]);
@@ -28,7 +28,7 @@ function segmentCaption(caption: Quote['c'], mentions: Quote['m']): Segment[] {
   }
   linkRanges.sort((a, b) => a[0] - b[0]);
 
-  tagLoop: for (const match of caption.matchAll(TAG_REGEX)) {
+  tagLoop: for (const match of caption.matchAll(TAG_RE)) {
     const s = match.index,
       e = s + match[0].length;
 

@@ -24,7 +24,7 @@ const MetaData: FC<{ time: Date; labels: Quote['l'] }> = memo(({ time, labels })
         {labels.map(label => (
           <Link
             key={label}
-            className='bg-accent/10 text-accent hover:bg-accent/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-colors'
+            className='bg-accent/10 text-accent hover:bg-accent/20 border-accent/50 inline-flex items-center rounded-full border px-3 py-0.5 text-sm font-medium transition-colors'
             to={`/search/:${label}`}
           >
             {label}

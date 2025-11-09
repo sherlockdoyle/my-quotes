@@ -70,7 +70,7 @@ const GradientLoader: FC<{ text: string }> = memo(({ text }) => {
   return (
     <div
       ref={containerRef}
-      className='relative flex h-full w-full items-center justify-center overflow-hidden'
+      className='absolute flex h-full w-full items-center justify-center overflow-hidden'
       style={{ background: generateGradient() }}
     >
       <div ref={textRef} className='max-w-[90%] text-center leading-tight wrap-break-word'>
@@ -84,7 +84,10 @@ const Image: FC<{ id: string; format: Quote['f']; text: Quote['t'] }> = ({ id, f
   const [imageLoaded, setImageLoaded] = useState(false);
 
   return (
-    <div className='bg-card relative aspect-square w-full overflow-hidden rounded-lg'>
+    <div
+      className='bg-card relative aspect-square w-full overflow-hidden rounded-lg'
+      style={{ viewTransitionName: `image-${id}` }}
+    >
       {imageLoaded || <GradientLoader text={text} />}
       <img
         className={`h-full w-full ${imageLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}

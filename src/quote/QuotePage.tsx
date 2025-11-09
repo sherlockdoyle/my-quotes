@@ -110,21 +110,17 @@ const QuotePage: FC<{ params: { id: string } }> = ({ params: { id } }) => {
 
   if (quote.isPending)
     return (
-      <div className='flex min-h-[60vh] items-center justify-center'>
-        <div className='text-center'>
-          <div className='border-border border-r-primary inline-block h-8 w-8 animate-spin rounded-full border-4' />
-          <p className='text-muted-foreground mt-2'>Loading quote...</p>
-        </div>
+      <div className='flex min-h-[60vh] flex-col items-center justify-center'>
+        <div className='border-border border-r-primary inline-block h-8 w-8 animate-spin rounded-full border-4' />
+        <p className='text-muted-foreground mt-2'>Loading quote...</p>
       </div>
     );
 
   if (quote.isError)
     return (
-      <div className='flex min-h-[60vh] items-center justify-center'>
-        <div className='text-center'>
-          <h2 className='mb-2 text-2xl font-bold text-red-400'>Error loading quote</h2>
-          <p className='text-muted-foreground mb-4'>{quote.error.message}</p>
-        </div>
+      <div className='flex min-h-[60vh] flex-col items-center justify-center'>
+        <p className='mb-2 text-2xl font-bold text-red-400'>Error loading quote</p>
+        <p className='text-muted-foreground mb-4'>{quote.error.message}</p>
       </div>
     );
 

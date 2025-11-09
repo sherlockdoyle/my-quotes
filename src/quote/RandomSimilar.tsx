@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Dices, EqualApproximately, Loader } from 'lucide-react';
+import { Dices, EqualApproximately } from 'lucide-react';
 import type { FC } from 'react';
 import { useLocation } from 'wouter';
 import { cosSimForNormedVec, parseEmbedding, type Emb } from '../util/emb';
@@ -61,7 +61,7 @@ const RandomSimilar: FC<{ id: string }> = ({ id }) => {
       }}
     >
       {categoryEmb.isPending ? (
-        <Loader className='h-4 w-4 animate-spin' />
+        <div className='border-border border-r-primary inline-block h-4 w-4 animate-spin rounded-full border-2' />
       ) : (
         <>
           <Dices className='h-5 w-5' />
