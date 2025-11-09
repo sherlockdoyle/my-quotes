@@ -10,7 +10,7 @@ const Result: FC<{ id: string }> = ({ id }) => {
 
   return (
     <Link
-      className='border-border bg-card hover:border-accent aspect-square cursor-pointer overflow-hidden rounded-lg border transition-all hover:shadow-lg'
+      className='border-border bg-card aspect-square cursor-pointer overflow-hidden rounded-lg border transition-all hover:scale-105 hover:shadow-lg'
       to={`/quote/${id}`}
       onClick={e => {
         e.preventDefault();
@@ -20,7 +20,7 @@ const Result: FC<{ id: string }> = ({ id }) => {
       style={{ viewTransitionName: `image-${id}` }}
     >
       <img
-        className='h-full w-full object-cover'
+        className='h-full w-full object-cover hover:scale-110'
         src={`${import.meta.env.BASE_URL}/images/${id}.${quote.data?.f === 'g' ? 'gif' : 'webp'}`}
         alt={quote.data?.t}
         loading='lazy'
