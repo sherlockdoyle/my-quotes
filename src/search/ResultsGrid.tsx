@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { type FC } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState, type FC } from 'react';
 import { Link, useLocation } from 'wouter';
 import { getQuote } from '../quote/quote';
 
@@ -29,11 +30,39 @@ const Result: FC<{ id: string }> = ({ id }) => {
   );
 };
 
+const ITEMS_PER_PAGE = 20;
+function getPageNumbers(total: number, current: number): number[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i);
+
+  if (current <= 3) return [0, 1, 2, 3, 4, -1, total - 1];
+
+  if (current >= total - 4) return [0, -1, total - 5, total - 4, total - 3, total - 2, total - 1];
+
+  return [0, -1, current - 1, current, current + 1, -1, total - 1];
+}
+
 const ResultsGrid: FC<{ results: string[] }> = ({ results }) => {
+  const [currentPage, setCurrentPage] = useState(0);
+  function handlePageChange(page: number) {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  const totalPages = Math.ceil(results.length / ITEMS_PER_PAGE);
+  const startIndex = currentPage * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentResults = results.slice(startIndex, endIndex);
+
   return (
     <div className='space-y-2'>
       <p className='text-muted-foreground text-sm'>
         Found {results.length} result{results.length === 1 || 's'}
+        {totalPages > 1 && (
+          <>
+            {' '}
+            (showing {startIndex + 1}-{Math.min(endIndex, results.length)})
+          </>
+        )}
       </p>
 
       {results.length === 0 ? (
@@ -42,11 +71,53 @@ const ResultsGrid: FC<{ results: string[] }> = ({ results }) => {
           <p className='text-muted-foreground mt-1 text-sm'>Try adjusting your search criteria</p>
         </div>
       ) : (
-        <div className='grid grid-cols-[repeat(auto-fit,minmax(11rem,1fr))] gap-2'>
-          {results.map(id => (
-            <Result key={id} id={id} />
-          ))}
-        </div>
+        <>
+          <div className='grid grid-cols-[repeat(auto-fit,minmax(11rem,1fr))] gap-2'>
+            {currentResults.map(id => (
+              <Result key={id} id={id} />
+            ))}
+          </div>
+
+          {totalPages > 1 && (
+            <div className='mt-4 flex h-10 items-stretch justify-center gap-1'>
+              <button
+                className='border-border bg-card hover:bg-muted inline-flex max-w-10 flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50'
+                disabled={currentPage <= 0}
+                onClick={() => handlePageChange(currentPage - 1)}
+                aria-label='Previous page'
+              >
+                <ChevronLeft className='h-4 w-4' />
+              </button>
+              {getPageNumbers(totalPages, currentPage).map((page, index) =>
+                page === -1 ? (
+                  <span key={`ellipsis-${index}`} className='px-2'>
+                    ...
+                  </span>
+                ) : (
+                  <button
+                    key={page}
+                    className={`border-border inline-flex max-w-10 flex-1 items-center justify-center gap-2 rounded-lg border text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50 ${
+                      page === currentPage ? 'bg-primary' : 'bg-card hover:bg-muted cursor-pointer transition-colors'
+                    }`}
+                    onClick={() => handlePageChange(page)}
+                    aria-label={`Page ${page}`}
+                    aria-current={page === currentPage ? 'page' : undefined}
+                  >
+                    {page + 1}
+                  </button>
+                ),
+              )}
+              <button
+                className='border-border bg-card hover:bg-muted inline-flex max-w-10 flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50'
+                disabled={currentPage >= totalPages - 1}
+                onClick={() => handlePageChange(currentPage + 1)}
+                aria-label='Next page'
+              >
+                <ChevronRight className='h-4 w-4' />
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

@@ -29,8 +29,10 @@ const FeaturedCard: FC<{
       <h3 className='text-2xl leading-tight font-bold text-balance text-white uppercase text-shadow-lg'>{title}</h3>
     </div>
 
-    <div className='absolute inset-x-0 bottom-0 min-h-1/2 translate-y-0 bg-linear-to-t from-black/90 via-black/70 to-transparent p-6 transition-transform duration-300 ease-out md:translate-y-full md:group-hover:translate-y-0'>
-      <p className='absolute bottom-6 text-base leading-relaxed text-white/90 text-shadow-sm'>{description}</p>
+    <div className='absolute inset-x-0 bottom-0 min-h-1/2 translate-y-0 bg-linear-to-t from-black/90 via-black/70 to-transparent transition-transform duration-300 ease-out md:translate-y-full md:group-hover:translate-y-0'>
+      <p className='absolute inset-x-0 bottom-0 p-6 text-base leading-relaxed text-white/90 text-shadow-sm'>
+        {description}
+      </p>
     </div>
   </Link>
 );

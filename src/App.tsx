@@ -70,7 +70,7 @@ const App: FC = () => {
             </div>
           </header>
 
-          <main className='mx-auto max-w-3xl p-2 sm:p-4'>
+          <main className='mx-auto mb-2 max-w-3xl p-2 sm:p-4'>
             <Switch>
               <Route path='/' component={HomePage} />
               <Route path='/quote/:id' component={QuotePage} />
