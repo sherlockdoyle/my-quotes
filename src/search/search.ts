@@ -1,4 +1,4 @@
-import { type FeatureExtractionPipeline } from '@xenova/transformers';
+import { type FeatureExtractionPipeline } from '@huggingface/transformers';
 import { cosSimForNormedVec, parseEmbedding, type Emb } from '../util/emb';
 
 const TOKENIZER_RE = /(#\w*|:\w*|[()|&]|[^#:\(\)\|&]+)/g;
@@ -178,7 +178,7 @@ export class Searcher {
 
   private async semanticSort(ids: string[] | null, normalText: string): Promise<string[]> {
     if (!this.semModel) {
-      const { pipeline } = await import('@xenova/transformers');
+      const { pipeline } = await import('@huggingface/transformers');
       const modelPromise = pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2'); // we don't await this here as it will load in parallel with the embedding
       const emb = parseEmbedding(
         new DataView(await (await fetch(`${import.meta.env.BASE_URL}/content.emb`)).arrayBuffer()),
