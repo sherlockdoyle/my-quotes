@@ -1,23 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { type FC } from 'react';
-import { Link, useLocation } from 'wouter';
 import { getQuote } from '../quote/quote';
+import TransitionLink from '../util/TransitionLink';
 
 const Result: FC<{ id: string }> = ({ id }) => {
-  const [, navigate] = useLocation();
-
   const quote = useQuery({ queryKey: ['quote', id], queryFn: () => getQuote(id) });
 
   return (
-    <Link
+    <TransitionLink
       className='border-border bg-card aspect-square cursor-pointer overflow-hidden rounded-lg border transition-all hover:scale-105 hover:shadow-lg'
       to={`/quote/${id}`}
-      onClick={e => {
-        e.preventDefault();
-        if (document.startViewTransition) document.startViewTransition(() => navigate(`/quote/${id}`));
-        else navigate(`/quote/${id}`);
-      }}
       style={{ viewTransitionName: `image-${id}` }}
     >
       <img
@@ -26,7 +19,7 @@ const Result: FC<{ id: string }> = ({ id }) => {
         alt={quote.data?.t}
         loading='lazy'
       />
-    </Link>
+    </TransitionLink>
   );
 };
 

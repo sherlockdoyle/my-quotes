@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
-import type { FC } from 'react';
-import { Link } from 'wouter';
+import { useEffect, type FC } from 'react';
+import { Link, useLocation } from 'wouter';
 import { getQuote, type Quote } from './quote';
 import QuoteView from './QuoteView';
 import RandomSimilar from './RandomSimilar';
@@ -81,29 +81,63 @@ const Share: FC<{ id: string; quote: Quote }> = ({ id, quote }) => {
   );
 };
 
-const Navigation: FC<{ id: string; prev: Quote['p']; next: Quote['n'] }> = ({ id, prev, next }) => (
-  <div className='border-border/40 flex items-center justify-between gap-3 border-t pt-4'>
-    <Link
-      className='border-border bg-card hover:bg-muted inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors'
-      title='Previous quote'
-      to={`/quote/${prev}`}
-    >
-      <ChevronLeft className='h-4 w-4' />
-      Previous
-    </Link>
+const Navigation: FC<{ id: string; prev: Quote['p']; next: Quote['n'] }> = ({ id, prev, next }) => {
+  const [, navigate] = useLocation();
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.shiftKey || event.altKey || event.ctrlKey || event.metaKey || event.target !== document.body) return;
 
-    <RandomSimilar id={id} />
+      if (
+        event.key === 'ArrowLeft' ||
+        event.key === 'a' ||
+        event.key === 'A' ||
+        event.key === 'h' ||
+        event.key === 'H' ||
+        event.key === 'p' ||
+        event.key === 'P'
+      )
+        navigate(`/quote/${prev}`);
 
-    <Link
-      className='border-border bg-card hover:bg-muted inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors'
-      title='Next quote'
-      to={`/quote/${next}`}
-    >
-      Next
-      <ChevronRight className='h-4 w-4' />
-    </Link>
-  </div>
-);
+      if (
+        event.key === 'ArrowRight' ||
+        event.key === 'd' ||
+        event.key === 'D' ||
+        event.key === 'l' ||
+        event.key === 'L' ||
+        event.key === 'n' ||
+        event.key === 'N'
+      )
+        navigate(`/quote/${next}`);
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [prev, next, navigate]);
+
+  return (
+    <div className='border-border/40 flex items-center justify-between gap-3 border-t pt-4'>
+      <Link
+        className='border-border bg-card hover:bg-muted inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors'
+        title='Previous quote'
+        to={`/quote/${prev}`}
+      >
+        <ChevronLeft className='h-4 w-4' />
+        Previous
+      </Link>
+
+      <RandomSimilar id={id} />
+
+      <Link
+        className='border-border bg-card hover:bg-muted inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors'
+        title='Next quote'
+        to={`/quote/${next}`}
+      >
+        Next
+        <ChevronRight className='h-4 w-4' />
+      </Link>
+    </div>
+  );
+};
 
 const QuotePage: FC<{ params: { id: string } }> = ({ params: { id } }) => {
   const quote = useQuery({ queryKey: ['quote', id], queryFn: () => getQuote(id) });

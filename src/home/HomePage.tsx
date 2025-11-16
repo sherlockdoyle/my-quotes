@@ -1,6 +1,9 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { AlertTriangle } from 'lucide-react';
-import type { FC } from 'react';
+import { memo, type FC } from 'react';
 import { Link } from 'wouter';
+import type { Quote } from '../quote/quote';
+import TransitionLink from '../util/TransitionLink';
 
 const FeaturedCard: FC<{
   title: string;
@@ -9,7 +12,7 @@ const FeaturedCard: FC<{
   imageName?: string;
   viewTransitionName?: string;
 }> = ({ title, description, href, imageName, viewTransitionName }) => (
-  <Link
+  <TransitionLink
     className='group relative h-64 cursor-pointer overflow-hidden rounded-lg transition-transform hover:scale-105'
     to={href}
   >
@@ -34,8 +37,36 @@ const FeaturedCard: FC<{
         {description}
       </p>
     </div>
-  </Link>
+  </TransitionLink>
 );
+
+const History: FC = memo(() => {
+  const queryClient = useQueryClient();
+  const cachedQuotes = queryClient.getQueriesData<Quote>({ queryKey: ['quote'] }); // we will show iff we've in the cache
+
+  const today = new Date();
+  const quoteIdsMadeToday = cachedQuotes
+    .filter(([, quote]) => {
+      if (quote) {
+        const date = new Date(quote.d);
+        return date.getDate() === today.getDate() && date.getMonth() === today.getMonth();
+      }
+    })
+    .map(([key]) => key[1] as string);
+  const quoteId = quoteIdsMadeToday[Math.floor(Math.random() * quoteIdsMadeToday.length)];
+
+  if (!quoteId) return null;
+
+  return (
+    <FeaturedCard
+      title='In the Past'
+      description='A quote from the past.'
+      href={`/quote/${quoteId}`}
+      imageName={`${quoteId}.webp`}
+      viewTransitionName={`image-${quoteId}`}
+    />
+  );
+});
 
 const HomePage: FC = () => (
   <div className='space-y-8 px-2 py-4'>
@@ -74,15 +105,15 @@ const HomePage: FC = () => (
 
       <div className='grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-4'>
         <FeaturedCard
-          title='Continuity'
-          description='A collection of stories that are linked together. Or, are they?'
-          href='/search/%23continuity_by_sd'
-        />
-        <FeaturedCard
           title='Fragments'
           description='A collection of different stories, maybe. Make sure to read them in order, or not!'
           href='/search/%23fragments_by_sd'
           imageName='crjn0m.webp'
+        />
+        <FeaturedCard
+          title='Continuity'
+          description='A collection of stories that are linked together. Or, are they?'
+          href='/search/%23continuity_by_sd'
         />
         <FeaturedCard
           title='A Poem'
@@ -98,6 +129,7 @@ const HomePage: FC = () => (
           imageName='crl4mn.webp'
           viewTransitionName='image-crl4mn'
         />
+        <History />
       </div>
     </section>
   </div>
