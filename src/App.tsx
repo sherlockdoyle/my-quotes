@@ -74,7 +74,7 @@ const App: FC = () => {
             <Switch>
               <Route path='/' component={HomePage} />
               <Route path='/quote/:id' component={QuotePage} />
-              <Route path='/search/:query?' component={SearchPage} />
+              <Route path='/search/:query?/:page?' component={SearchPage} />
               <Route>
                 <Redirect to='/' />
               </Route>

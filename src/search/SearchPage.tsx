@@ -143,7 +143,7 @@ function useLocalStorageSemanticEnabled() {
   return [value, setValue] as const;
 }
 
-const SearchPage: FC<{ params: { query?: string } }> = ({ params: { query } }) => {
+const SearchPage: FC<{ params: { query?: string; page?: string } }> = ({ params: { query, page } }) => {
   const [semanticEnabled, setSemanticEnabled] = useLocalStorageSemanticEnabled();
 
   const tagsMap = useQuery<Record<string, string[]>>({
@@ -253,7 +253,11 @@ const SearchPage: FC<{ params: { query?: string } }> = ({ params: { query } }) =
           <p className='text-muted-foreground mb-4'>{doSearch.error.message}</p>
         </div>
       ) : (
-        <ResultsGrid results={doSearch.data} />
+        <ResultsGrid
+          results={doSearch.data}
+          currentPage={page ? parseInt(page) || 1 : 1}
+          setCurrentPage={page => navigate(`/search/${encodeURIComponent(searchQuery)}/${page}`)}
+        />
       )}
     </div>
   );
